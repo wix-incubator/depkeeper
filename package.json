@@ -1,0 +1,39 @@
+{
+  "name": "depkeeper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "precommit": "yoshi lint",
+    "build": ":",
+    "test": "yoshi test",
+    "posttest": "yoshi lint",
+    "release": "yoshi release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wix/depkeeper.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "author": {
+    "name": "Tomas Miliauskas",
+    "email": "tomas@wix.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wix/depkeeper/issues"
+  },
+  "homepage": "https://github.com/wix/depkeeper#readme",
+  "devDependencies": {
+    "chai": "~4.1.0",
+    "eslint": "~4.7.0",
+    "eslint-config-wix": "latest",
+    "husky": "~0.14.0",
+    "yoshi": "latest"
+  },
+  "eslintConfig": {
+    "extends": "wix/esnext"
+  }
+}
