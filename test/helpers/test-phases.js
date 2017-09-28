@@ -20,11 +20,6 @@ class Test {
     mkdirp.sync(this.tmp);
   }
 
-  beforeAndAfterEach() {
-    afterEach(() => this.teardown());
-    return this;
-  }
-
   setup(tree, hooks) {
     const flat = flattenTree(tree);
     Object.keys(flat).forEach(file => {

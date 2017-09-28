@@ -14,11 +14,11 @@ npm install -g depkeeper
 ```
 
 ## API
-## Basic Usage
+## Simple Usage
 ```js
-const dk = require('depkeeper');
+const depkeeper = require('depkeeper');
 
-dk.check()
+depkeeper().check()
   .then(outdated => {
     console.log(outdated); // [{ dependency: 'eslint', current: '3.0.1', latest: 4.7.0' }]
   })
