@@ -27,14 +27,16 @@
   },
   "homepage": "https://github.com/wix/depkeeper#readme",
   "dependencies": {
-    "glob": "^7.1.2"
+    "node-fetch": "~1.7.0",
+    "semver": "~5.4.0"
   },
   "devDependencies": {
     "chai": "~4.1.0",
     "eslint": "~4.7.0",
     "eslint-config-wix": "latest",
     "husky": "~0.14.0",
-    "shelljs": "^0.7.8",
+    "shelljs": "~0.7.0",
+    "shmock": "~0.8.0",
     "yoshi": "latest"
   },
   "eslintConfig": {
