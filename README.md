@@ -24,7 +24,7 @@ const depkeeper = require('depkeeper');
 depkeeper()
   .check()
   .then(outdated => {
-    console.log(outdated); // [{dependency: 'eslint', current: '3.0.1', latest: 4.7.0'}]
+    console.log(outdated); // [{dependency: 'eslint', version: '3.0.1', latest: 4.7.0'}]
   });
 ```
 
@@ -37,7 +37,7 @@ depkeeper()
     patch: 1
   })
   .then(outdated => {
-    console.log(outdated); // [{dependency: 'eslint', current: '3.0.1', minimal: '4.1.2' latest: 4.7.0'}]
+    console.log(outdated); // [{dependency: 'eslint', version: '3.0.1', minimal: '4.1.2' latest: 4.7.0'}]
   });
 ```
 

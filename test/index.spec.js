@@ -32,15 +32,32 @@ describe('depkeeper', () => {
 
     it('should do nothing when there are no dependencies in package.json', () => {
       const {tmp} = test.setup({
-        'package.json': createJSON({})
+        'package.json': createJSON()
       });
 
       return dk({cwd: tmp, registryUrl}).check().then(outdated =>
         expect(outdated).to.deep.equal([]));
     });
 
-    it.skip('should use version from the package.json when there is no dependency on the disk', () => {
+    it.skip('should use version from the package.json when there is no dependency in filesystem', () => {
       // TODO: implement
+    });
+
+    it.skip('should return list of outdated dependencies by specific rules', () => {
+      const {tmp} = test.setup({
+        'node_modules/dep/package.json': createPackage('dep', '1.0.0'),
+        'package.json': createJSON(withDeps({dep: ''}))
+      });
+
+      mockDependencyMeta('dep', ['1.0.0', '1.1.0', '3.2.1']);
+
+      return dk({cwd: tmp, registryUrl}).check({patch: 1}).then(outdated =>
+        expect(outdated).to.deep.equal([{
+          name: 'dep',
+          version: '1.0.0',
+          minimal: '1.1.0',
+          latest: '3.2.1'
+        }]));
     });
 
     it.skip('should check deps for itself', () => {
@@ -58,15 +75,18 @@ describe('depkeeper', () => {
     return {dependencies};
   }
 
-  function createJSON(json) {
+  function createJSON(json = {}) {
     return JSON.stringify(json, null, 2);
   }
 
-  function mockDependencyMeta(dep, latest) {
+  function mockDependencyMeta(dep, versions) {
+    versions = [].concat(versions);
+    const last = versions.length - 1;
     npmServer.get(`/${dep}`).reply(200, {
       _id: dep,
       name: dep,
-      'dist-tags': {latest}
+      'dist-tags': {latest: versions[last]},
+      versions
     });
   }
 });
