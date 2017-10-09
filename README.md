@@ -53,6 +53,23 @@ depkeeper()
 ### Passing Hooks
 It's possible to omit some of the dependencies from being checked.
 
+**API Proposal**
+```js
+depkeeper().
+  .major(1, 'eslint')
+  .patch(10, 'yoshi')
+  .check()
+  .then(outdated => {
+    console.log(outdated);
+    /*
+      [
+        [{name: 'eslint', version: '3.0.1', minimal: '4.0.0', latest: '5.1.2'}],
+        [{name: 'yoshi', version: '1.0.100', minimal: '1.0.189', latest: '1.0.199'}]
+      ]
+    */
+  });
+```
+
 ### Multiple Checks
 It's possible to specify several thresholds and perform multiple checks.
 

@@ -63,7 +63,7 @@ describe('depkeeper', () => {
     });
 
     it.skip('should check deps for itself', () => {
-      return dk().check({patch: 1}).then(outdated => {
+      return dk({cwd: '/Users/tomas/_code/wix-api-explorer', registryUrl: 'http://repo.dev.wix/artifactory/api/npm/npm-repos/'}).check({major: 1, minor: 1, patch: 1}).then(outdated => {
         console.log(outdated);
       });
     });
