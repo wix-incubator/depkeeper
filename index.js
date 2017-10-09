@@ -1,16 +1,25 @@
 'use strict';
 
 const semver = require('semver');
-const deps = require('./lib/deps');
+const collectDeps = require('./lib/collect-deps');
 const createRegistry = require('./lib/registry');
 const findMinimal = require('./lib/find-minimal');
 
+const npmRegistry = 'https://registry.npmjs.org/';
 
-function depkeeper({cwd = process.cwd(), registryUrl = 'https://registry.npmjs.org/'} = {}) {
+function depkeeper({cwd = process.cwd(), registryUrl = npmRegistry} = {}) {
   const registry = createRegistry(registryUrl);
+  let includes = [];
+
+  function include(pattern) {
+    includes = includes.concat(pattern);
+    return this;
+  }
 
   function check(rules) {
-    return deps.collect(cwd)
+    const incl = includes.slice();
+    includes.length = 0;
+    return collectDeps(cwd, incl)
       .then(appendVersions)
       .then(list => appendMinimal(list, rules))
       .then(list => filterOutdated(list, !!rules))
@@ -48,7 +57,7 @@ function depkeeper({cwd = process.cwd(), registryUrl = 'https://registry.npmjs.o
       .then(versions => Object.assign({}, dep, versions));
   }
 
-  return {check};
+  return {include, check};
 }
 
 module.exports = depkeeper;

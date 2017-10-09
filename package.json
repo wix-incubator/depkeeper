@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/wix/depkeeper#readme",
   "dependencies": {
+    "minimatch": "~3.0.0",
     "node-fetch": "~1.7.0",
     "semver": "~5.4.0"
   },

@@ -24,11 +24,12 @@ const depkeeper = require('depkeeper');
 depkeeper()
   .check()
   .then(outdated => {
-    console.log(outdated); // [{dependency: 'eslint', version: '3.0.1', latest: 4.7.0'}]
+    console.log(outdated); // [{name: 'eslint', version: '3.0.1', latest: 4.7.0'}]
   });
 ```
+This will return a list of all outdated dependencies, no matter by how many versions they are behind. If all the dependencies are up to date, the list will be empty.
 
-### Passing Thresholds
+### Passing Thresholds (Rules)
 ```js
 depkeeper()
   .check({
@@ -37,11 +38,13 @@ depkeeper()
     patch: 1
   })
   .then(outdated => {
-    console.log(outdated); // [{dependency: 'eslint', version: '3.0.1', minimal: '4.0.0' latest: 4.7.0'}]
+    console.log(outdated); // [{name: 'eslint', version: '3.0.1', minimal: '4.0.0' latest: 4.7.0'}]
   });
 ```
+This will return a list of outdated dependencies but only those that are behind by the specific amount of versions. Notice that it's possible to match only by one type of versions. Passing several thresholds will resolve from left to right: in other words, it will try to find outdated by major, then by minor and then by patch.
 
 ### Handling Exceptions
+Exceptions will reject the promise.
 ```js
 depkeeper()
   .check()
@@ -50,13 +53,28 @@ depkeeper()
   });
 ```
 
-### Passing Hooks
-It's possible to omit some of the dependencies from being checked.
+### Checking Only Specific Dependencies
+It's possible to check only specific dependencies by given [pattern](https://github.com/isaacs/minimatch).
 
-**API Proposal**
+```js
+depkeeper()
+  .include('eslint-*')
+  .check()
+  .then(outdated => {
+    console.log(outdated);
+    /*
+      [
+        {name: 'eslint', version: '3.0.1', latest: 4.7.0'},
+        {name: 'eslint-plugin-react', version: '6.1.6', latest: 7.4.0'},
+      ]
+    */
+  });
+```
+
+### New API Proposal
 ```js
 depkeeper().
-  .major(1, 'eslint')
+  .major(1, 'eslint-*')
   .patch(10, 'yoshi')
   .check()
   .then(outdated => {

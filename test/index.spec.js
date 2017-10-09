@@ -62,6 +62,29 @@ describe('depkeeper', () => {
         }]));
     });
 
+    it('should check only dependencies that match pattern', () => {
+      const {tmp} = test.setup({
+        'node_modules/dep/package.json': createPackage('dep', '1.0.0'),
+        'node_modules/ped/package.json': createPackage('ped', '2.0.0'),
+        'node_modules/edp/package.json': createPackage('edp', '3.0.0'),
+        'package.json': createJSON(withDeps({dep: '', ped: '', edp: ''}))
+      });
+
+      mockDependencyMeta('dep', ['1.0.0', '1.0.1']);
+      mockDependencyMeta('ped', ['2.0.0', '2.0.1']);
+      mockDependencyMeta('edp', ['3.0.0', '3.0.1']);
+
+      return dk({cwd: tmp, registryUrl})
+        .include('d*')
+        .include('ped')
+        .check()
+        .then(outdated =>
+          expect(outdated).to.deep.equal([
+            {name: 'dep', version: '1.0.0', latest: '1.0.1'},
+            {name: 'ped', version: '2.0.0', latest: '2.0.1'}
+          ]));
+    });
+
     it.skip('should check deps for itself', () => {
       return dk({cwd: '/Users/tomas/_code/wix-api-explorer', registryUrl: 'http://repo.dev.wix/artifactory/api/npm/npm-repos/'}).check({major: 1, minor: 1, patch: 1}).then(outdated => {
         console.log(outdated);
