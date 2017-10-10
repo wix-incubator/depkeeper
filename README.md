@@ -77,19 +77,20 @@ depkeeper()
 
 ### Multiple Thresholds
 When passing multiple thresholds the rules will be combined. Minimal version will be calculated as following.
-`{major: 0, minor: 0, patch: 0}` - latest patch of latest minor of latest major (basically latest)
-`{major: 0, patch: 0}` - latest patch of lowest minor of latest major
-`{major: 0, minor: 0}` - lowest patch of latest minor of latest major
-`{minor: 0, patch: 0}` - latest patch of latest minor of current major
-`{major: 0}` - lowest patch of lowest minor of latest major
-`{minor: 0}` - lowest patch of latest minor of current major
-`{patch: 0}` - latest patch of current minor of current major
+- `{major: 0, minor: 0, patch: 0}` - latest patch of latest minor of latest major (basically latest)
+- `{major: 0, patch: 0}` - latest patch of lowest minor of latest major
+- `{major: 0, minor: 0}` - lowest patch of latest minor of latest major
+- `{minor: 0, patch: 0}` - latest patch of latest minor of current major
+- `{major: 0}` - lowest patch of lowest minor of latest major
+- `{minor: 0}` - lowest patch of latest minor of current major
+- `{patch: 0}` - latest patch of current minor of current major
 
 Passing positive numbers as thresholds will calculate by how many versions the specific version type is outdated.
-`{major: 1, minor: 2}` - patch outdated by 2 of lowest minor of major outdated by 1
-`{minor: 3}` - lowest patch of minor outdated by 3 of current major
+- `{major: 1, minor: 2}` - patch outdated by 2 of lowest minor of major outdated by 1
+- `{minor: 3}` - lowest patch of minor outdated by 3 of current major
 
 *Note:* when there's no version which is outdated by specific threshold the algorithm will fallback to lowest. Look at the example bellow.
+
 Given threshold is `{minor: 0, patch: 2}`, current version is `1.0.0`.
 Rule says preserve major and take the latest minor with patch outdated by 2 versions.
 Let's assume there are only these versions of major `1`: `1.0.0`, `1.1.0`, `1.1.1`, `1.1.2`, `1.1.3`, `1.2.0`, `1.2.1`,
