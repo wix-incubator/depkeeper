@@ -93,7 +93,8 @@ Passing positive numbers as thresholds will calculate by how many versions the s
 
 Given threshold is `{minor: 0, patch: 2}`, current version is `1.0.0`.
 Rule says preserve major and take the latest minor with patch outdated by 2 versions.
-Let's assume there are only these versions of major `1`: `1.0.0`, `1.1.0`, `1.1.1`, `1.1.2`, `1.1.3`, `1.2.0`, `1.2.1`,
+Let's assume there are only these versions of major version 1: `1.0.0`, `1.1.0`, `1.1.1`, `1.1.2`, `1.1.3`, `1.2.0`, `1.2.1`.
+As there is no patch outdated by 2 of latest minimal of current major, minimal version will be equal to lowest patch of latest minor of current major which is `1.2.0`.
 
 ## CLI
 Running command `depkeeper check` will check and print the list of outdated dependencies.
