@@ -49,7 +49,7 @@ function depkeeper({cwd = process.cwd(), registryUrl = npmRegistry} = {}) {
   }
 
   function isOutdated({version, minimal, latest}, thresholds) {
-    return !version || !latest || thresholds ? minimal && semver.compare(version, minimal) === -1 : semver.neq(version, latest);
+    return !version || !latest || thresholds ? semver.lt(version, minimal) : semver.neq(version, latest);
   }
 
   function filterOutNoise(dep) {

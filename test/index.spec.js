@@ -70,16 +70,21 @@ describe('depkeeper', () => {
       .then(outdated =>
         expect(outdated).to.deep.equal([
           [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '1.0.2'}],
-          [{name: 'ped', version: '2.0.0', latest: '2.0.1'}]
+          [{name: 'ped', version: '2.0.0', minimal: '2.0.0', latest: '2.0.1'}]
         ]));
   });
 
   it.skip('should check deps for itself', () => {
     return dk({cwd: '/Users/tomas/_code/wix-api-explorer', registryUrl: 'http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/'})
-      .rule('wix-*', {major: 1, minor: 1, patch: 1})
+      .rule('wix-*', {patch: 1})
+      .rule('react*')
       .check()
-      .then(outdated => {
-        console.log(outdated);
+      .then(([wix, react]) => {
+        console.log('wix-*');
+        wix.forEach(od => console.log(JSON.stringify(od)));
+
+        console.log('\nreact*');
+        react.forEach(od => console.log(JSON.stringify(od)));
       });
   });
 
