@@ -83,6 +83,42 @@ describe('depkeeper', () => {
       });
   });
 
+  /*
+  1.0.0 - current
+  1.0.1
+  1.1.0
+  1.2.0
+  1.2.1
+  1.3.0
+  1.5.0
+  1.5.1
+  1.5.2
+  2.0.0
+  dk().check({patch: 0}) - minimal 1.0.1
+  dk().check({minor: 0, patch: 0) - minimal 1.5.2
+  dk().check({minor: 1, patch: 1) - minimal
+  dk().check({minor: 'latest') - minimal 1.5.2
+  dk().check({minor: 2, patch: 'latest') - minimal 1.2.1
+  *.0.2
+
+  dk().minorDiff() - 1.5.0
+  dk().minorLate() - 1.5.2
+
+  dk()
+    .rule('react*', {minor: 1, patch: 1})
+    .rule('wix-*', {major: 0, minor: 0, patch: 10})
+    .rule('react', {major: 0, minor: 1})
+    .rule('eslint', {minor: 1})
+    .rule('*') // latest or pass all 0
+    .check()
+    .then(([react, wix, reactForWix, eslint, all]) => {
+      if (wix.length && reactForWix) {
+        console.log(wix);
+        process.exit(1)
+      }
+    });
+  */
+
   function createPackage(name, version) {
     return createJSON({name, version});
   }
