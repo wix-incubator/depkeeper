@@ -1,7 +1,7 @@
 'use strict';
 
 const semver = require('semver');
-const collectDeps = require('./lib/collect-deps');
+const {collectDeps, depsByIncludes} = require('./lib/deps');
 const createRegistry = require('./lib/registry');
 const findMinimal = require('./lib/find-minimal');
 
@@ -9,47 +9,23 @@ const npmRegistry = 'https://registry.npmjs.org/';
 
 function depkeeper({cwd = process.cwd(), registryUrl = npmRegistry} = {}) {
   const registry = createRegistry(registryUrl);
-  let includes = [];
+  const rules = [];
 
-  function include(pattern) {
-    includes = includes.concat(pattern);
+  function rule(pattern, thresholds) {
+    rules.push({pattern, thresholds});
     return this;
   }
 
-  function check(rules) {
-    const incl = includes.slice();
-    includes.length = 0;
-    return collectDeps(cwd, incl)
-      .then(appendVersions)
-      .then(list => appendMinimal(list, rules))
-      .then(list => filterOutdated(list, !!rules))
-      .then(filterOutNoise);
+  function check() {
+    const _rules = resetRules();
+    const includes = _rules.slice().reduce((acc, {pattern}) => acc.concat(pattern), []);
+    return collectDeps(cwd, includes)
+      .then(deps => Promise.all(deps.map(withVersions)))
+      .then(deps => processRules(_rules, deps));
   }
 
-  function appendVersions(list) {
-    return Promise.all(list.map(withVersions));
-  }
-
-  function appendMinimal(list, rules = {}) {
-    return list.map(dep =>
-      Object.assign({}, dep, {minimal: findMinimal(dep.version, dep.versions, rules)}));
-  }
-
-  function filterOutdated(list, rules) {
-    return list.filter(({version, minimal, latest}) => {
-      return !version || !latest || rules ? minimal && semver.compare(version, minimal) === -1 : semver.neq(version, latest);
-    });
-  }
-
-  function filterOutNoise(list) {
-    const whiteList = ['name', 'version', 'minimal', 'latest'];
-    return list.map(dep =>
-      whiteList.reduce((result, prop) => {
-        if (prop in dep && dep[prop]) {
-          result[prop] = dep[prop];
-        }
-        return result;
-      }, {}));
+  function resetRules() {
+    return rules.splice(0);
   }
 
   function withVersions(dep) {
@@ -57,7 +33,36 @@ function depkeeper({cwd = process.cwd(), registryUrl = npmRegistry} = {}) {
       .then(versions => Object.assign({}, dep, versions));
   }
 
-  return {include, check};
+  function processRules(ruleList, deps) {
+    return ruleList.map(aRule => processRule(aRule, deps));
+  }
+
+  function processRule({pattern, thresholds}, deps) {
+    return depsByIncludes(deps, pattern)
+      .map(dep => appendMinimal(dep, thresholds))
+      .filter(dep => isOutdated(dep, thresholds))
+      .map(filterOutNoise);
+  }
+
+  function appendMinimal(dep, thresholds) {
+    return Object.assign({}, dep, {minimal: findMinimal(dep.version, dep.versions, thresholds)});
+  }
+
+  function isOutdated({version, minimal, latest}, thresholds) {
+    return !version || !latest || thresholds ? minimal && semver.compare(version, minimal) === -1 : semver.neq(version, latest);
+  }
+
+  function filterOutNoise(dep) {
+    const whiteList = ['name', 'version', 'minimal', 'latest'];
+    return whiteList.reduce((result, prop) => {
+      if (prop in dep && dep[prop]) {
+        result[prop] = dep[prop];
+      }
+      return result;
+    }, {});
+  }
+
+  return {rule, check};
 }
 
 module.exports = depkeeper;
