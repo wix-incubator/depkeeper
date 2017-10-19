@@ -5,10 +5,8 @@ const {collectDeps, depsByIncludes} = require('./lib/deps');
 const createRegistry = require('./lib/registry');
 const findMinimal = require('./lib/find-minimal');
 
-const npmRegistry = 'https://registry.npmjs.org/';
-
-function depkeeper({cwd = process.cwd(), registryUrl = npmRegistry} = {}) {
-  const registry = createRegistry(registryUrl);
+function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
+  const registry = createRegistry(cwd, registryUrl);
   const rules = [];
 
   function rule(pattern, thresholds) {

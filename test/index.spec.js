@@ -51,6 +51,19 @@ describe('depkeeper', () => {
     // TODO: implement
   });
 
+  it.skip('should throw an error if cannot react registry', () => {
+    // TODO: implement
+
+    /*
+    { FetchError: invalid json response body at http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/yoshi reason: Unexpected token < in JSON at position 0
+    at /Users/tomas/_code/yoshi/plugins/yoshi-deps/node_modules/node-fetch/lib/body.js:48:31
+    at process._tickCallback (internal/process/next_tick.js:109:7)
+    name: 'FetchError',
+    message: 'invalid json response body at http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/yoshi reason: Unexpected token < in JSON at position 0',
+    type: 'invalid-json' }
+    */
+  });
+
   it('should return a list of outdated dependencies according to pattern and rules', () => {
     const {tmp} = test.setup({
       'node_modules/dep/package.json': createPackage('dep', '1.0.0'),
@@ -87,42 +100,6 @@ describe('depkeeper', () => {
         react.forEach(od => console.log(JSON.stringify(od)));
       });
   });
-
-  /*
-  1.0.0 - current
-  1.0.1
-  1.1.0
-  1.2.0
-  1.2.1
-  1.3.0
-  1.5.0
-  1.5.1
-  1.5.2
-  2.0.0
-  dk().check({patch: 0}) - minimal 1.0.1
-  dk().check({minor: 0, patch: 0) - minimal 1.5.2
-  dk().check({minor: 1, patch: 1) - minimal
-  dk().check({minor: 'latest') - minimal 1.5.2
-  dk().check({minor: 2, patch: 'latest') - minimal 1.2.1
-  *.0.2
-
-  dk().minorDiff() - 1.5.0
-  dk().minorLate() - 1.5.2
-
-  dk()
-    .rule('react*', {minor: 1, patch: 1})
-    .rule('wix-*', {major: 0, minor: 0, patch: 10})
-    .rule('react', {major: 0, minor: 1})
-    .rule('eslint', {minor: 1})
-    .rule('*') // latest or pass all 0
-    .check()
-    .then(([react, wix, reactForWix, eslint, all]) => {
-      if (wix.length && reactForWix) {
-        console.log(wix);
-        process.exit(1)
-      }
-    });
-  */
 
   function createPackage(name, version) {
     return createJSON({name, version});
