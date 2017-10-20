@@ -16,7 +16,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
 
   function check() {
     const _rules = resetRules();
-    const includes = _rules.slice().reduce((acc, {pattern}) => acc.concat(pattern), []);
+    const includes = _rules.reduce((acc, {pattern}) => acc.concat(pattern), []);
     return collectDeps(cwd, includes)
       .then(deps => Promise.all(deps.map(withVersions)))
       .then(deps => processRules(_rules, deps));
