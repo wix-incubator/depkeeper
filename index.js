@@ -1,13 +1,12 @@
 'use strict';
 
 const semver = require('semver');
-const {collectDeps, depsByIncludes} = require('./lib/deps');
-const createRegistry = require('./lib/registry');
+const createModules = require('./lib/modules');
 const findMinimal = require('./lib/find-minimal');
 
 function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
-  const registry = createRegistry(cwd, registryUrl);
   const rules = [];
+  const modules = createModules(cwd, registryUrl);
 
   function rule(pattern, thresholds) {
     rules.push({pattern, thresholds});
@@ -17,8 +16,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   function check() {
     const _rules = resetRules();
     const includes = _rules.reduce((acc, {pattern}) => acc.concat(pattern), []);
-    return collectDeps(cwd, includes)
-      .then(deps => Promise.all(deps.map(withVersions)))
+    return modules.collect(includes)
       .then(deps => processRules(_rules, deps));
   }
 
@@ -26,24 +24,23 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     return rules.splice(0);
   }
 
-  function withVersions(dep) {
-    return registry.getVersions(dep.name)
-      .then(versions => Object.assign({}, dep, versions));
-  }
-
   function processRules(ruleList, deps) {
-    return ruleList.map(aRule => processRule(aRule, deps));
+    const okDeps = deps.filter(dep => dep.ok);
+    // const failed = deps.filter(dep => !dep.ok); // TODO: figure out how to pass this info via API
+
+    return ruleList.map(aRule => processRule(aRule, okDeps));
   }
 
   function processRule({pattern, thresholds}, deps) {
-    return depsByIncludes(deps, pattern)
+    return modules.depsByIncludes(deps, pattern) // TODO: refactor this part, looks like utility method that should not be on modules instance
       .map(dep => appendMinimal(dep, thresholds))
       .filter(dep => isOutdated(dep, thresholds))
       .map(filterOutNoise);
   }
 
   function appendMinimal(dep, thresholds) {
-    return Object.assign({}, dep, {minimal: findMinimal(dep.version, dep.versions, thresholds)});
+    const result = Object.assign({}, dep, {minimal: findMinimal(dep.version, dep.versions, thresholds)});
+    return result;
   }
 
   function isOutdated({version, minimal, latest}, thresholds) {

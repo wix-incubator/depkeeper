@@ -43,25 +43,28 @@ describe('depkeeper', () => {
         expect(outdated).to.deep.equal([]));
   });
 
-  it.skip('should throw an error if there are no rules', () => {
-    // TODO: implement
+  it('should skip dependencies that are not installed on the file system', () => {
+    const {tmp} = test.setup({
+      'package.json': createJSON(withDeps({dep: ''}))
+    });
+
+    return dk({cwd: tmp, registryUrl})
+      .rule('*')
+      .check().then(([outdated]) =>
+        expect(outdated).to.deep.equal([]));
   });
 
-  it.skip('should use version from the package.json when there is no dependency in filesystem', () => {
-    // TODO: implement
-  });
+  it('should not consider dependencies that cannot be reached on registry', () => {
+    const {tmp} = test.setup({
+      'node_modules/dep/package.json': createPackage('dep', '4.0.13'),
+      'package.json': createJSON(withDeps({dep: ''}))
+    });
 
-  it.skip('should throw an error if cannot react registry', () => {
-    // TODO: implement
-
-    /*
-    { FetchError: invalid json response body at http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/yoshi reason: Unexpected token < in JSON at position 0
-    at /Users/tomas/_code/yoshi/plugins/yoshi-deps/node_modules/node-fetch/lib/body.js:48:31
-    at process._tickCallback (internal/process/next_tick.js:109:7)
-    name: 'FetchError',
-    message: 'invalid json response body at http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/yoshi reason: Unexpected token < in JSON at position 0',
-    type: 'invalid-json' }
-    */
+    return dk({cwd: tmp, registryUrl})
+      .rule('*')
+      .check()
+      .then(([outdated]) =>
+        expect(outdated).to.deep.equal([]));
   });
 
   it('should return a list of outdated dependencies according to pattern and rules', () => {
@@ -85,6 +88,18 @@ describe('depkeeper', () => {
           [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '1.0.2'}],
           [{name: 'ped', version: '2.0.0', minimal: '2.0.0', latest: '2.0.1'}]
         ]));
+  });
+
+  it.skip('should throw an error if there are no rules', () => {
+    // TODO: implement
+  });
+
+  it.skip('should use version from the package.json when there is no dependency in filesystem', () => {
+    // TODO: implement as a feature
+  });
+
+  it.skip('should pay attention to globally installed dependencies', () => {
+    // TODO: implement
   });
 
   it.skip('should check deps for itself', () => {
