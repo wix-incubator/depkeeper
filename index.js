@@ -28,7 +28,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     return this;
   }
 
-  function checkAll() {
+  function checkRules() {
     return Promise.all(
       resetRules().map(({pattern, thresholds}) =>
         check(pattern, thresholds))
@@ -58,7 +58,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     }, {});
   }
 
-  return {rule, check: checkAll};
+  return {rule, check, checkRules};
 }
 
 module.exports = depkeeper;

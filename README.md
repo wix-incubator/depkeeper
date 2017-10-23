@@ -22,44 +22,43 @@ const depkeeper = require('depkeeper');
 ### Simple Usage
 ```js
 depkeeper()
-  .rules('*')
-  .check()
-  .then(([outdated]) => {
+  .check('*')
+  .then(outdated => {
     console.log(outdated); // [{name: 'eslint', version: '3.0.1', latest: 4.7.0'}]
   });
 ```
-This will return a list of all outdated dependencies, no matter by how many versions they are behind. If all the dependencies are up to date, the list will be empty.
+It will return a list of all outdated dependencies, no matter by how many versions they are behind. If all the dependencies are up to date, the list will be empty.
 
 ### Check By Thresholds
 ```js
 depkeeper()
-  .rules('*', {major: 1})
-  .check()
+  .check('*', {major: 1})
   .then(([outdated]) => {
     console.log(outdated); // [{name: 'eslint', version: '3.0.1', minimal: '4.0.0' latest: 5.7.0'}]
   });
 ```
-This will return a list of outdated dependencies but only those that are behind by the specific amount of versions (thresholds).
+It will return a list of outdated dependencies but only those that are behind by the specific amount of versions (thresholds).
 
 ### Handling Exceptions
 Exceptions will reject the promise.
 ```js
 depkeeper()
-  .rules('*')
-  .check()
+  .check('*')
   .catch(err => {
     throw err; // Something went wrong...
   });
 ```
+
+NOTE: Unsuccessful attempts to reach registry or file system are swallowed. Still looking for a best way to pass them via API.
 
 ### Checking With Multiple Rules
 It's possible to check specific dependencies by given [pattern](https://github.com/isaacs/minimatch) with separate thresholds.
 
 ```js
 depkeeper()
-  .rules('eslint-*')
-  .rules('yoshi', {patch: 10})
-  .check()
+  .rule('eslint-*')
+  .rule('yoshi', {patch: 10})
+  .checkRules()
   .then(outdated => {
     console.log(outdated);
     /*[
@@ -73,6 +72,14 @@ depkeeper()
       ]
     */
   });
+```
+
+### Options
+```js
+const dk = depkeeper({
+  cwd: 'string', // current working directory (default process.cwd())
+  registryUrl: 'string' // override registry URL (default comes from .nvmrc or https://registry.npmjs.org)
+});
 ```
 
 ### Multiple Thresholds
@@ -102,7 +109,13 @@ Running command `depkeeper check` will check and print the list of outdated depe
 WIP...
 
 ## Contribute
-WIP...
+1. `git clone git@github.com:wix/depkeeper.git`
+1. `cd depkeeper`
+1. `npm install` or `yarn`
+1. `npm test` or `yarn test`
+
+In case of small bug, just create a PR otherwise please discuss inside an issue.
+PR's without tests or with failing tests will be automatically rejected.
 
 ## License
 [MIT](LICENSE)

@@ -26,9 +26,8 @@ describe('depkeeper', () => {
     mockDependencyMeta('dep2', '1.5.8');
 
     return dk({cwd: tmp, registryUrl})
-      .rule('*')
-      .check()
-      .then(([outdated]) =>
+      .check('*')
+      .then(outdated =>
         expect(outdated).to.deep.equal([{name: 'dep1', version: '4.0.13', latest: '5.0.1'}]));
   });
 
@@ -38,8 +37,8 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .rule('*')
-      .check().then(([outdated]) =>
+      .check('*')
+      .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
 
@@ -49,8 +48,8 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .rule('*')
-      .check().then(([outdated]) =>
+      .check('*')
+      .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
 
@@ -61,9 +60,8 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .rule('*')
-      .check()
-      .then(([outdated]) =>
+      .check('*')
+      .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
 
@@ -82,7 +80,7 @@ describe('depkeeper', () => {
     return dk({cwd: tmp, registryUrl})
       .rule('d*', {patch: 1})
       .rule('ped')
-      .check()
+      .checkRules()
       .then(outdated =>
         expect(outdated).to.deep.equal([
           [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '1.0.2'}],
