@@ -8,34 +8,35 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   const rules = [];
   const modules = createModules(cwd, registryUrl);
 
+  function check(pattern, thresholds) {
+    return modules.collect(pattern)
+      .then(deps => {
+        const okDeps = deps.filter(dep => dep.ok);
+
+        // TODO: figure out how to pass this info via API
+        // const failed = deps.filter(dep => !dep.ok);
+
+        return okDeps
+          .map(dep => appendMinimal(dep, thresholds))
+          .filter(dep => isOutdated(dep, thresholds))
+          .map(filterOutNoise);
+      });
+  }
+
   function rule(pattern, thresholds) {
     rules.push({pattern, thresholds});
     return this;
   }
 
-  function check() {
-    const _rules = resetRules();
-    const includes = _rules.reduce((acc, {pattern}) => acc.concat(pattern), []);
-    return modules.collect(includes)
-      .then(deps => processRules(_rules, deps));
+  function checkAll() {
+    return Promise.all(
+      resetRules().map(({pattern, thresholds}) =>
+        check(pattern, thresholds))
+    );
   }
 
   function resetRules() {
     return rules.splice(0);
-  }
-
-  function processRules(ruleList, deps) {
-    const okDeps = deps.filter(dep => dep.ok);
-    // const failed = deps.filter(dep => !dep.ok); // TODO: figure out how to pass this info via API
-
-    return ruleList.map(aRule => processRule(aRule, okDeps));
-  }
-
-  function processRule({pattern, thresholds}, deps) {
-    return modules.depsByIncludes(deps, pattern) // TODO: refactor this part, looks like utility method that should not be on modules instance
-      .map(dep => appendMinimal(dep, thresholds))
-      .filter(dep => isOutdated(dep, thresholds))
-      .map(filterOutNoise);
   }
 
   function appendMinimal(dep, thresholds) {
@@ -57,7 +58,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     }, {});
   }
 
-  return {rule, check};
+  return {rule, check: checkAll};
 }
 
 module.exports = depkeeper;
