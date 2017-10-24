@@ -88,6 +88,25 @@ describe('depkeeper', () => {
         ]));
   });
 
+  it('should allow to specify several rules on the same dependency', () => {
+    const {tmp} = test.setup({
+      'node_modules/dep/package.json': createPackage('dep', '1.0.0'),
+      'package.json': createJSON(withDeps({dep: ''}))
+    });
+
+    mockDependencyMeta('dep', ['1.0.0', '1.0.1', '1.0.2', '2.0.0', '3.0.0']);
+
+    return dk({cwd: tmp, registryUrl})
+      .rule('dep', {major: 1})
+      .rule('dep', {patch: 1})
+      .checkRules()
+      .then(outdated =>
+        expect(outdated).to.deep.equal([
+          [{name: 'dep', version: '1.0.0', minimal: '2.0.0', latest: '3.0.0'}],
+          [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '3.0.0'}]
+        ]));
+  });
+
   it.skip('should throw an error if there are no rules', () => {
     // TODO: implement
   });
