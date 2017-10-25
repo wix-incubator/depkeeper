@@ -5,7 +5,7 @@ const createModules = require('./lib/modules');
 const findMinimal = require('./lib/find-minimal');
 
 function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
-  const rules = [];
+  const rulesQueue = [];
   const modules = createModules(cwd, registryUrl);
 
   function check(pattern, thresholds) {
@@ -24,20 +24,12 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   }
 
   function rule(pattern, thresholds) {
-    rules.push({pattern, thresholds});
+    rulesQueue.push(check(pattern, thresholds));
     return this;
   }
 
   function checkRules() {
-    return Promise.all(
-      resetRules().map(({pattern, thresholds}) =>
-        check(pattern, thresholds))
-    );
-  }
-
-  function resetRules() {
-    // TODO: remove this! use queue from modules
-    return rules.splice(0);
+    return Promise.all(rulesQueue.splice(0));
   }
 
   function appendMinimal(dep, thresholds) {
