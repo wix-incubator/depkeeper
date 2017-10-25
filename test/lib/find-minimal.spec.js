@@ -18,7 +18,7 @@ describe('find-minimal.js', () => {
     expect(findMinimal(current, versions, thresholds)).to.equal('1.0.1');
   });
 
-  it('should return lowest patch of lowest minor of latest major', () => {
+  it('should return lowest patch of lowest minor of current major', () => {
     const current = '1.0.0';
     const thresholds = {minor: 0};
     expect(findMinimal(current, versions, thresholds)).to.equal('1.2.0');
