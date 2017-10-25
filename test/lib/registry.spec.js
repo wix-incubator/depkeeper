@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const {expect} = require('chai');
 const tp = require('../helpers/test-phases');
 const createRegistry = require('../../lib/registry');
@@ -21,6 +22,18 @@ describe('registry', () => {
       const registry = createRegistry(test.tmp);
       return registry.getRegistryUrl().then(result =>
         expect(result).to.equal(url));
+    });
+
+    it('should continue looking for registry url when .npmrc has no registry', () => {
+      const url = 'http://hello.computer';
+      const home = process.env.HOME;
+      test.setup({'.npmrc': '', 'home/.npmrc': `registry=${url}`});
+      process.env.HOME = path.join(test.tmp, 'home');
+      const registry = createRegistry(test.tmp);
+      return registry.getRegistryUrl().then(result => {
+        process.env.HOME = home;
+        expect(result).to.equal(url);
+      });
     });
   });
 });
