@@ -8,7 +8,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   const rulesQueue = [];
   const modules = createModules(cwd, registryUrl);
 
-  function check(pattern, thresholds) {
+  function check(pattern = '*', thresholds) {
     return modules.pull(pattern)
       .then(deps => {
         const okDeps = deps.filter(dep => dep.ok);
@@ -23,7 +23,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
       });
   }
 
-  function rule(pattern, thresholds) {
+  function rule(pattern = '*', thresholds) {
     rulesQueue.push(check(pattern, thresholds));
     return this;
   }

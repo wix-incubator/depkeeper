@@ -26,7 +26,7 @@ describe('depkeeper', () => {
     mockDependencyMeta('dep2', '1.5.8');
 
     return dk({cwd: tmp, registryUrl})
-      .check('*')
+      .check()
       .then(outdated =>
         expect(outdated).to.deep.equal([{name: 'dep1', version: '4.0.13', latest: '5.0.1'}]));
   });
@@ -37,7 +37,7 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .check('*')
+      .check()
       .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
@@ -48,7 +48,7 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .check('*')
+      .check()
       .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
@@ -60,7 +60,7 @@ describe('depkeeper', () => {
     });
 
     return dk({cwd: tmp, registryUrl})
-      .check('*')
+      .check()
       .then(outdated =>
         expect(outdated).to.deep.equal([]));
   });
@@ -105,10 +105,6 @@ describe('depkeeper', () => {
           [{name: 'dep', version: '1.0.0', minimal: '2.0.0', latest: '3.0.0'}],
           [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '3.0.0'}]
         ]));
-  });
-
-  it.skip('should throw an error if there are no rules', () => {
-    // TODO: implement
   });
 
   it.skip('should use version from the package.json when there is no dependency in filesystem', () => {

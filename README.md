@@ -22,7 +22,7 @@ const depkeeper = require('depkeeper');
 ### Simple Usage
 ```js
 depkeeper()
-  .check('*')
+  .check()
   .then(outdated => {
     console.log(outdated); // [{name: 'eslint', version: '3.0.1', latest: 4.7.0'}]
   });
@@ -43,7 +43,7 @@ It will return a list of outdated dependencies but only those that are behind by
 Exceptions will reject the promise.
 ```js
 depkeeper()
-  .check('*')
+  .check()
   .catch(err => {
     throw err; // Something went wrong...
   });
@@ -74,13 +74,21 @@ depkeeper()
   });
 ```
 
-### Options
+### Factory
 ```js
 const dk = depkeeper({
   cwd: 'string', // current working directory (default process.cwd())
   registryUrl: 'string' // override registry URL (default comes from .nvmrc or https://registry.npmjs.org)
 });
 ```
+
+### .check(pattern, thresholds)
+`pattern` - `string`, default - `'*'`, glob [pattern](https://github.com/isaacs/minimatch) to mark specific dependencies to check
+`thresholds` - `object`, `{major: number, minor: number, patch: number}`, specify by how many versions dependencies can be outdated
+
+### .rule(pattern, thresholds) & .checkRules()
+These two methods must be used together if you have multiple rules to check and don't want to deal with separate promises.
+It works exactly the same as `.check()` just that you build all your rules first and then execute them at once.
 
 ### Multiple Thresholds
 When passing multiple thresholds the rules will be combined. Minimal version will be calculated as following.
