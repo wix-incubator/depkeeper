@@ -7,8 +7,14 @@ const tp = require('./helpers/test-phases');
 describe('depkeeper', () => {
   const port = 3333;
   const registryUrl = `http://localhost:${port}/`;
-  const test = tp.create();
-  const npmServer = shmock(port);
+  let test, npmServer;
+
+  before(() => {
+    test = tp.create();
+    npmServer = shmock(port);
+  });
+
+  after(() => npmServer.close());
 
   afterEach(() => {
     test.teardown();

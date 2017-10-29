@@ -5,7 +5,9 @@ const tp = require('../helpers/test-phases');
 const createRegistry = require('../../lib/registry');
 
 describe('registry', () => {
-  const test = tp.create();
+  let test;
+
+  before(() => test = tp.create());
 
   describe('.getRegistryUrl()', () => {
     it('should return custom url', () => {
@@ -21,6 +23,14 @@ describe('registry', () => {
       const registry = createRegistry(test.tmp);
       return registry.getRegistryUrl().then(result =>
         expect(result).to.equal(url));
+    });
+  });
+
+  describe('.getVersions()', () => {
+    it('should return with empty versions when cannot reach npm server', () => {
+      const registry = createRegistry(test.tmp, `http://non.existing.server`);
+      return registry.getVersions('dep').then(data =>
+        expect(data).to.eql({ok: false, statusText: 'Non Existing Server', versions: []}));
     });
   });
 });
