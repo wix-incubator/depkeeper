@@ -98,9 +98,9 @@ describe('find-minimal.js', () => {
       expect(separate(current, versions, thresholds)).to.equal('3.2.1');
     });
 
-    it('should return the same version when there are no threshold', () => {
+    it('should return latest version when there are no thresholds', () => {
       const current = '1.0.0';
-      expect(separate(current, versions)).to.equal('1.0.0');
+      expect(separate(current, versions)).to.equal('3.2.1');
     });
 
     it('should fallback to lowest patch when there is no patch of specific threshold', () => {

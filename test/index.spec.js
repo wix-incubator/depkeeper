@@ -90,7 +90,7 @@ describe('depkeeper', () => {
       .then(outdated =>
         expect(outdated).to.deep.equal([
           [{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '1.0.2'}],
-          [{name: 'ped', version: '2.0.0', minimal: '2.0.0', latest: '2.0.1'}]
+          [{name: 'ped', version: '2.0.0', minimal: '2.0.1', latest: '2.0.1'}]
         ]));
   });
 
