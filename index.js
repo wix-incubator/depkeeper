@@ -18,7 +18,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
 
         return okDeps
           .map(dep => appendMinimal(dep, options))
-          .filter(dep => isOutdated(dep, options))
+          .filter(dep => isOutdated(dep))
           .map(filterOutNoise);
       });
   }
@@ -40,8 +40,8 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     return Object.assign({}, dep, {minimal});
   }
 
-  function isOutdated({version, minimal, latest}, options) {
-    return !version || !latest || (hasThresholds(options) ? semver.lt(version, minimal) : semver.neq(version, latest));
+  function isOutdated({version, minimal, latest}) {
+    return !version || !latest || semver.lt(version, minimal);
   }
 
   function filterOutNoise(dep) {
@@ -52,12 +52,6 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
       }
       return result;
     }, {});
-  }
-
-  function hasThresholds(thresholds) {
-    return ['major', 'minor', 'patch']
-      .filter(type => !isNaN(thresholds[type]))
-      .length !== 0;
   }
 
   function getThresholds({major, minor, patch}) {

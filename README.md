@@ -24,7 +24,7 @@ const depkeeper = require('depkeeper');
 depkeeper()
   .check()
   .then(outdated => {
-    console.log(outdated); // [{name: 'eslint', version: '3.0.1', latest: 4.7.0'}]
+    console.log(outdated); // [{name: 'eslint', version: '3.0.1',  minimal: '4.7.0', latest: '4.7.0'}]
   });
 ```
 It will return a list of all outdated dependencies, no matter by how many versions they are behind. If all the dependencies are up to date, the list will be empty.
@@ -34,7 +34,7 @@ It will return a list of all outdated dependencies, no matter by how many versio
 depkeeper()
   .check('*', {major: 1})
   .then(outdated => {
-    console.log(outdated); // [{name: 'eslint', version: '3.0.1', minimal: '4.0.0' latest: 5.7.0'}]
+    console.log(outdated); // [{name: 'eslint', version: '3.0.1', minimal: '4.0.0', latest: '5.7.0'}]
   });
 ```
 It will return a list of outdated dependencies but only those that are behind by the specific amount of versions (thresholds).

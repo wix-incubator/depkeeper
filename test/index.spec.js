@@ -28,13 +28,13 @@ describe('depkeeper', () => {
       'package.json': createJSON(withDeps({dep1: '', dep2: ''}))
     });
 
-    mockDependencyMeta('dep1', '5.0.1');
-    mockDependencyMeta('dep2', '1.5.8');
+    mockDependencyMeta('dep1', ['4.0.13', '5.0.1']);
+    mockDependencyMeta('dep2', ['1.5.8', '1.5.8']);
 
     return dk({cwd: tmp, registryUrl})
       .check()
       .then(outdated =>
-        expect(outdated).to.deep.equal([{name: 'dep1', version: '4.0.13', latest: '5.0.1'}]));
+        expect(outdated).to.deep.equal([{name: 'dep1', version: '4.0.13', minimal: '5.0.1', latest: '5.0.1'}]));
   });
 
   it('should do nothing when there are no dependencies in package.json', () => {
