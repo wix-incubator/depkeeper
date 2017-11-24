@@ -8,7 +8,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   const rulesQueue = [];
   const modules = createModules(cwd, registryUrl);
 
-  function check(pattern = '*', thresholds) {
+  function check(pattern = '*', options = {}) {
     return modules.pull(pattern)
       .then(deps => {
         const okDeps = deps.filter(dep => dep.ok);
@@ -17,14 +17,14 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
         // const failed = deps.filter(dep => !dep.ok);
 
         return okDeps
-          .map(dep => appendMinimal(dep, thresholds))
-          .filter(dep => isOutdated(dep, thresholds))
+          .map(dep => appendMinimal(dep, options))
+          .filter(dep => isOutdated(dep, options))
           .map(filterOutNoise);
       });
   }
 
-  function rule(pattern = '*', thresholds) {
-    rulesQueue.push(check(pattern, thresholds));
+  function rule(pattern = '*', options) {
+    rulesQueue.push(check(pattern, options));
     return this;
   }
 
@@ -32,13 +32,16 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
     return Promise.all(rulesQueue.splice(0));
   }
 
-  function appendMinimal(dep, thresholds) {
-    const result = Object.assign({}, dep, {minimal: findMinimal(dep.version, dep.versions, thresholds)});
-    return result;
+  function appendMinimal(dep, options) {
+    const {version, versions} = dep;
+    const thresholds = getThresholds(options);
+    const {strategy = 'separate'} = options;
+    const minimal = findMinimal[strategy](version, versions, thresholds);
+    return Object.assign({}, dep, {minimal});
   }
 
-  function isOutdated({version, minimal, latest}, thresholds) {
-    return !version || !latest || thresholds ? semver.lt(version, minimal) : semver.neq(version, latest);
+  function isOutdated({version, minimal, latest}, options) {
+    return !version || !latest || (hasThresholds(options) ? semver.lt(version, minimal) : semver.neq(version, latest));
   }
 
   function filterOutNoise(dep) {
@@ -49,6 +52,16 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
       }
       return result;
     }, {});
+  }
+
+  function hasThresholds(thresholds) {
+    return ['major', 'minor', 'patch']
+      .filter(type => !isNaN(thresholds[type]))
+      .length !== 0;
+  }
+
+  function getThresholds({major, minor, patch}) {
+    return {major, minor, patch};
   }
 
   return {rule, check, checkRules};

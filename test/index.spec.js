@@ -113,6 +113,20 @@ describe('depkeeper', () => {
         ]));
   });
 
+  it('should allow to specify \'numeric\' strategy', () => {
+    const {tmp} = test.setup({
+      'node_modules/dep/package.json': createPackage('dep', '2.1.2'),
+      'package.json': createJSON(withDeps({dep: ''}))
+    });
+
+    mockDependencyMeta('dep', ['2.1.2', '2.2.0', '3.0.0', '3.1.0']);
+
+    return dk({cwd: tmp, registryUrl})
+      .check('*', {minor: 1, strategy: 'numeral'})
+      .then(outdated =>
+        expect(outdated).to.deep.equal([{name: 'dep', version: '2.1.2', minimal: '3.0.0', latest: '3.1.0'}]));
+  });
+
   it.skip('should use version from the package.json when there is no dependency in filesystem', () => {
     // TODO: implement as a feature
   });
