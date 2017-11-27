@@ -82,15 +82,28 @@ const dk = depkeeper({
 });
 ```
 
-### .check(pattern, thresholds)
+### .check(pattern, options)
 `pattern` - `string`, default - `'*'`, glob [pattern](https://github.com/isaacs/minimatch) to mark specific dependencies to check
-`thresholds` - `object`, `{major: number, minor: number, patch: number}`, specify by how many versions dependencies can be outdated
+`options` - `object`
+  `major: number, minor: number, patch: number`, specify by how many versions dependencies can be outdated
+  `strategy: string`, default - `'numeral'`, will apply rules using certain strategy: `numeral` or `separate`
 
-### .rule(pattern, thresholds) & .checkRules()
+### .rule(pattern, options) & .checkRules()
 These two methods must be used together if you have multiple rules to check and don't want to deal with separate promises.
 It works exactly the same as `.check()` just that you build all your rules first and then execute them at once.
 
-### Multiple Thresholds
+### Strategy
+#### Numeral
+Minimal version will be calculated as if it was a number, where major, minor, patch are just digits with relations. This strategy can be used only with a single threshold.
+
+Given threshold is `{minor: 1}`, current version is `1.0.0`.
+Rule says check if dependency is outdated by at least 1 minor version.
+Let's assume there are only these versions: `1.0.0`, `1.1.0`, `1.1.1`, `1.1.2`, `2.0.0`, `2.0.1`, `2.1.0`.
+As patch is not important, number sequence consists only of these versions: `1.0.0`, `1.1.0`, `2.0.0`, `2.1.0`.
+Applying threshold 1, minimal version is `2.0.0`.
+
+#### Separate
+##### Multiple Thresholds
 When passing multiple thresholds the rules will be combined. Minimal version will be calculated as following.
 - `{major: 0, minor: 0, patch: 0}` - latest patch of latest minor of latest major (basically latest)
 - `{major: 0, patch: 0}` - latest patch of lowest minor of latest major

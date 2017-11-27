@@ -113,7 +113,7 @@ describe('depkeeper', () => {
         ]));
   });
 
-  it('should allow to specify \'numeric\' strategy', () => {
+  it('should allow to specify \'numeral\' strategy', () => {
     const {tmp} = test.setup({
       'node_modules/dep/package.json': createPackage('dep', '2.1.2'),
       'package.json': createJSON(withDeps({dep: ''}))
