@@ -104,7 +104,7 @@ describe('depkeeper', () => {
 
     return dk({cwd: tmp, registryUrl})
       .rule('dep', {major: 1})
-      .rule('dep', {patch: 1})
+      .rule('dep', {patch: 3})
       .checkRules()
       .then(outdated =>
         expect(outdated).to.deep.equal([
@@ -113,18 +113,18 @@ describe('depkeeper', () => {
         ]));
   });
 
-  it('should allow to specify \'numeral\' strategy', () => {
+  it('should allow to specify \'separate\' strategy', () => {
     const {tmp} = test.setup({
-      'node_modules/dep/package.json': createPackage('dep', '2.1.2'),
+      'node_modules/dep/package.json': createPackage('dep', '1.0.0'),
       'package.json': createJSON(withDeps({dep: ''}))
     });
 
-    mockDependencyMeta('dep', ['2.1.2', '2.2.0', '3.0.0', '3.1.0']);
+    mockDependencyMeta('dep', ['1.0.0', '1.0.1', '1.0.2', '2.0.0', '3.0.0']);
 
     return dk({cwd: tmp, registryUrl})
-      .check('*', {minor: 1, strategy: 'numeral'})
+      .check('*', {patch: 1, strategy: 'separate'})
       .then(outdated =>
-        expect(outdated).to.deep.equal([{name: 'dep', version: '2.1.2', minimal: '3.0.0', latest: '3.1.0'}]));
+        expect(outdated).to.deep.equal([{name: 'dep', version: '1.0.0', minimal: '1.0.1', latest: '3.0.0'}]));
   });
 
   it.skip('should use version from the package.json when there is no dependency in filesystem', () => {

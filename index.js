@@ -35,7 +35,7 @@ function depkeeper({cwd = process.cwd(), registryUrl} = {}) {
   function appendMinimal(dep, options) {
     const {version, versions} = dep;
     const thresholds = getThresholds(options);
-    const {strategy = 'separate'} = options;
+    const {strategy = 'numeral'} = options;
     const minimal = findMinimal[strategy](version, versions, thresholds);
     return Object.assign({}, dep, {minimal});
   }
