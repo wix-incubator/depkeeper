@@ -83,10 +83,10 @@ const dk = depkeeper({
 ```
 
 ### .check(pattern, options)
-`pattern` - `string`, default - `'*'`, glob [pattern](https://github.com/isaacs/minimatch) to mark specific dependencies to check
-`options` - `object`
-  `major: number, minor: number, patch: number`, specify by how many versions dependencies can be outdated
-  `strategy: string`, default - `'numeral'`, will apply rules using certain strategy: `numeral` or `separate`
+- `pattern` - `string`, default - `'*'`, glob [pattern](https://github.com/isaacs/minimatch) to mark specific dependencies to check
+- `options` - `object`
+  - `major: number, minor: number, patch: number`, specify by how many versions dependencies can be outdated
+  - `strategy: string`, default - `'numeral'`, will apply rules using certain strategy: `numeral` or `separate`
 
 ### .rule(pattern, options) & .checkRules()
 These two methods must be used together if you have multiple rules to check and don't want to deal with separate promises.
