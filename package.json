@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "precommit": "yoshi lint",
+    "precommit": "haste lint",
     "build": ":",
-    "test": "yoshi test",
-    "posttest": "yoshi lint",
-    "release": "yoshi release"
+    "test": "haste test",
+    "posttest": "haste lint",
+    "release": "haste release"
   },
   "repository": {
     "type": "git",
@@ -37,11 +37,14 @@
     "eslint": "~4.7.0",
     "eslint-config-wix": "latest",
     "husky": "~0.14.0",
+    "haste-preset-yoshi": "latest",
     "shelljs": "~0.7.0",
-    "shmock": "~0.8.0",
-    "yoshi": "latest"
+    "shmock": "~0.8.0"
   },
   "eslintConfig": {
     "extends": "wix/esnext"
+  },
+  "haste": {
+    "preset": "yoshi"
   }
 }
