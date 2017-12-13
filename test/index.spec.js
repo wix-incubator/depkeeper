@@ -135,20 +135,6 @@ describe('depkeeper', () => {
     // TODO: implement
   });
 
-  it.skip('should check deps for itself', () => {
-    return dk({cwd: '/Users/tomas/_code/wix-api-explorer', registryUrl: 'http://repo.dev.wixpress.com/artifactory/api/npm/npm-repos/'})
-      .rule('wix-*', {patch: 1})
-      .rule('react*')
-      .check()
-      .then(([wix, react]) => {
-        console.log('wix-*');
-        wix.forEach(od => console.log(JSON.stringify(od)));
-
-        console.log('\nreact*');
-        react.forEach(od => console.log(JSON.stringify(od)));
-      });
-  });
-
   function createPackage(name, version) {
     return createJSON({name, version});
   }
