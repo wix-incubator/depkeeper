@@ -76,23 +76,23 @@ describe('registry', () => {
     it('should pass an authorization header if exists', () => {
       test.setup({'.npmrc': `registry=${url}\n${host}:_authToken=${token}`});
       npmServer
-        .get('/@wix%2Fdep')
+        .get('/@mars%2Fdep')
         .set('Authorization', 'Bearer ' + token)
         .reply(200, {});
 
       return createRegistry({cwd})
-        .getVersions('@wix/dep')
+        .getVersions('@mars/dep')
         .then(data =>
           expect(data).to.eql({ok: true, status: 200, statusText: 'OK', latest: undefined, versions: []}));
     });
 
     it('should handle case when cannot reach private package', () => {
       npmServer
-        .get('/@wix%2Fdep')
+        .get('/@mars%2Fdep')
         .reply(404, {error: 'Not found'});
 
       return createRegistry({cwd, url})
-        .getVersions('@wix/dep')
+        .getVersions('@mars/dep')
         .then(data =>
           expect(data).to.eql({ok: false, status: 404, statusText: 'Not Found', latest: undefined, versions: []}));
     });
