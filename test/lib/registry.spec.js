@@ -14,18 +14,34 @@ describe('registry', () => {
   });
 
   describe('.getRegistryUrl()', () => {
+    const url = 'http://hello.computer';
+
     it('should return custom url', () => {
-      const url = 'http://hello.computer';
       const registry = createRegistry({cwd, url});
       return registry.getRegistryUrl().then(result =>
         expect(result).to.equal(url));
     });
 
     it('should return registry url from .npmrc', () => {
-      const url = 'http://hello.computer';
       test.setup({'.npmrc': `registry=${url}`});
       const registry = createRegistry({cwd});
       return registry.getRegistryUrl().then(result =>
+        expect(result).to.equal(url));
+    });
+
+    it('should return @scope:registry url from .npmrc for a specific scope', () => {
+      const scope = '@mars';
+      test.setup({'.npmrc': `${scope}:registry=${url}`});
+      const registry = createRegistry({cwd});
+      return registry.getRegistryUrl(scope).then(result =>
+        expect(result).to.equal(url));
+    });
+
+    it('should return registry url from .npmrc when no registry for specific scope', () => {
+      const scope = '@mars';
+      test.setup({'.npmrc': `registry=${url}`});
+      const registry = createRegistry({cwd});
+      return registry.getRegistryUrl(scope).then(result =>
         expect(result).to.equal(url));
     });
   });
