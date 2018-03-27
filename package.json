@@ -34,11 +34,11 @@
   },
   "devDependencies": {
     "chai": "~4.1.0",
+    "cista": "~0.0.1",
     "eslint": "~4.7.0",
     "eslint-config-wix": "latest",
-    "husky": "~0.14.0",
     "haste-preset-yoshi": "latest",
-    "shelljs": "~0.7.0",
+    "husky": "~0.14.0",
     "shmock": "~0.8.0"
   },
   "eslintConfig": {
