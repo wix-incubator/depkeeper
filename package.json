@@ -35,7 +35,7 @@
   "devDependencies": {
     "chai": "~4.1.0",
     "cista": "~0.0.1",
-    "eslint": "~4.7.0",
+    "eslint": "~6.6.0",
     "eslint-config-wix": "latest",
     "haste-preset-yoshi": "latest",
     "husky": "~0.14.0",
